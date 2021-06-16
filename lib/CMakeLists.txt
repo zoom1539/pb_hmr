@@ -9,8 +9,8 @@ link_directories(/usr/local/cuda/lib64)
 
 
 # OpenCV
-# find_package(OpenCV 3.4.8 REQUIRED PATHS ../extra/opencv348)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3.4.8 REQUIRED PATHS ~/PLATFORM/3rdparty/opencv348)
+# find_package(OpenCV REQUIRED)
 
 # xtensor
 find_package(xtensor REQUIRED)
@@ -29,12 +29,13 @@ find_package(nlohmann_json REQUIRED)
 #     message(FATAL_ERROR "Pytorch Not Found!")
 # endif(NOT TORCH_FOUND)
 
-set(LIBTORCH_ROOT /home/ubuntu/PLATFORM/3rdparty/libtorch130)
+#libtorch
+set(LIBTORCH_ROOT ~/PLATFORM/3rdparty/libtorch131)
 set(LIBTORCH_INCLUDE_DIRS ${LIBTORCH_ROOT}/include ${LIBTORCH_ROOT}/include/torch/csrc/api/include)
 set(LIBTORCH_LIB_DIR ${LIBTORCH_ROOT}/lib)
 
 # TensorRT
-set(TENSORRT_ROOT /home/ubuntu/PLATFORM/3rdparty/TensorRT-7.0.0.11)
+set(TENSORRT_ROOT ~/PLATFORM/3rdparty/TensorRT-7.0.0.11)
 set(TENSORRT_INCLUDE_DIR ${TENSORRT_ROOT}/include)
 set(TENSORRT_LIB_DIR ${TENSORRT_ROOT}/lib)
 
@@ -67,4 +68,4 @@ target_link_libraries(hmr ${OpenCV_LIBS}
 # make install
 install(FILES class_hmr.h DESTINATION include)
 install(TARGETS hmr LIBRARY DESTINATION lib)
-install(FILES ../hmr.engine DESTINATION lib)
+install(FILES ../hmr_fp16_b4.engine DESTINATION lib)
