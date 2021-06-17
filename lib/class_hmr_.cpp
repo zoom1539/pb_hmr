@@ -21,7 +21,7 @@ static const int OUTPUT_SIZE = POSE_SIZE + SHAPE_SIZE;
 static const char* INPUT_BLOB_NAME = "input";
 static const char* OUTPUT_BLOB_NAME = "output";
 
-void _HMR::rot6d_to_mat(const cv::Mat &rot6d_, cv::Mat &rotmat_)
+static void rot6d_to_mat(const cv::Mat &rot6d_, cv::Mat &rotmat_)
 {
     // TEST
     // cv::Mat rot6d = (cv::Mat_<float>(1,6) << 0.4250,  0.0280, 0.0810, -1.0976, -0.7952, -0.0642);
@@ -67,7 +67,7 @@ void _HMR::rot6d_to_mat(const cv::Mat &rot6d_, cv::Mat &rotmat_)
 
 }
 
-std::map<std::string, Weights> _HMR::loadWeights(const std::string file)
+static std::map<std::string, Weights> loadWeights(const std::string file)
 {
     std::cout << "Loading weights: " << file << std::endl;
     std::map<std::string, Weights> weightMap;
@@ -106,7 +106,7 @@ std::map<std::string, Weights> _HMR::loadWeights(const std::string file)
     return weightMap;
 }
 
-IScaleLayer* _HMR::addBatchNorm2d(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, std::string lname, float eps) 
+static IScaleLayer* addBatchNorm2d(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, std::string lname, float eps) 
 {
     float *gamma = (float*)weightMap[lname + ".weight"].values;
     float *beta = (float*)weightMap[lname + ".bias"].values;
@@ -141,7 +141,7 @@ IScaleLayer* _HMR::addBatchNorm2d(INetworkDefinition *network, std::map<std::str
     return scale_1;
 }
 
-IActivationLayer* _HMR::bottleneck(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int inch, int outch, int stride, std::string lname) 
+static IActivationLayer* bottleneck(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int inch, int outch, int stride, std::string lname) 
 {
     Weights emptywts{DataType::kFLOAT, nullptr, 0};
 
@@ -184,7 +184,7 @@ IActivationLayer* _HMR::bottleneck(INetworkDefinition *network, std::map<std::st
     return relu3;
 }
 
-ICudaEngine* _HMR::createEngine(unsigned int maxBatchSize, 
+static ICudaEngine* createEngine(unsigned int maxBatchSize, 
                           IBuilder* builder, 
                           IBuilderConfig* config, 
                           DataType dt, 
@@ -360,7 +360,7 @@ ICudaEngine* _HMR::createEngine(unsigned int maxBatchSize,
     return engine;
 }
 
-void _HMR::APIToModel(unsigned int maxBatchSize, IHostMemory** modelStream, const std::string &wts_path_)
+static void APIToModel(unsigned int maxBatchSize, IHostMemory** modelStream, const std::string &wts_path_)
 {
     // Create builder
     IBuilder* builder = createInferBuilder(gLogger);
@@ -379,7 +379,7 @@ void _HMR::APIToModel(unsigned int maxBatchSize, IHostMemory** modelStream, cons
     config->destroy();
 }
 
-void _HMR::doInference(IExecutionContext& context, cudaStream_t& stream, void **buffers, float* input, float* output, int batchSize) {
+static void doInference(IExecutionContext& context, cudaStream_t& stream, void **buffers, float* input, float* output, int batchSize) {
     // DMA input batch data to device, infer on the batch asynchronously, and DMA output back to host
     CUDA_CHECK(cudaMemcpyAsync(buffers[0], input, batchSize * 3 * INPUT_H * INPUT_W * sizeof(float), cudaMemcpyHostToDevice, stream));
     context.enqueue(batchSize, buffers, stream, nullptr);
@@ -387,7 +387,7 @@ void _HMR::doInference(IExecutionContext& context, cudaStream_t& stream, void **
     cudaStreamSynchronize(stream);
 }
 
-cv::Mat _HMR::get_transform(const cv::Point2i &center_, float scale_, int res_)
+static cv::Mat get_transform(const cv::Point2i &center_, float scale_, int res_)
 {
     float h = 200 * scale_;
     cv::Mat t = cv::Mat::eye(3,3,CV_32F);
@@ -398,7 +398,7 @@ cv::Mat _HMR::get_transform(const cv::Point2i &center_, float scale_, int res_)
     return t;
 }
 
-cv::Point2i _HMR::transform(const cv::Point2i &pt_, const cv::Point2i &center_, float scale_, int res_)
+static cv::Point2i transform(const cv::Point2i &pt_, const cv::Point2i &center_, float scale_, int res_)
 {
     cv::Mat t  = get_transform(center_, scale_, res_);
     cv::Mat t_i = t.inv();
@@ -408,7 +408,7 @@ cv::Point2i _HMR::transform(const cv::Point2i &pt_, const cv::Point2i &center_, 
     return cv::Point2i(new_pt.at<float>(0,0) + 1, new_pt.at<float>(1,0) + 1);
 }
 
-void _HMR::preprocess_img(const cv::Mat &img_, cv::Mat &img_preprocess_)
+static void preprocess_img(const cv::Mat &img_, cv::Mat &img_preprocess_)
 {
     int height = img_.rows;
     int width = img_.cols;
