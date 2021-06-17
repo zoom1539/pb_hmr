@@ -1,5 +1,4 @@
 build
 lib/extra/SMPLpp/smpl_male.json
-hmr_fp16_b4.engine
-hmr_fp32_b1.engine
-hmr.wts
+*.wts
+*.engine

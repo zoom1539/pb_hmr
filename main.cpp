@@ -12,8 +12,8 @@ int main()
 
     //
     std::string wts_path = "../hmr.wts";
-    std::string engine_path = "../hmr_fp16_b4.engine";
-#if 0
+    std::string engine_path = "../hmr_fp16_b1.engine";
+#if 1
     bool is_serialized = hmr.serialize(wts_path, engine_path);
     if(!is_serialized)
     {

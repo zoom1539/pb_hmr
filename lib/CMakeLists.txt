@@ -68,4 +68,5 @@ target_link_libraries(hmr ${OpenCV_LIBS}
 # make install
 install(FILES class_hmr.h DESTINATION include)
 install(TARGETS hmr LIBRARY DESTINATION lib)
-install(FILES ../hmr_fp16_b4.engine DESTINATION lib)
+install(FILES ../hmr_fp16_b1.engine DESTINATION lib)
+install(FILES extra/SMPLpp/smpl_male.json DESTINATION lib)
