@@ -13,15 +13,15 @@ static Logger gLogger;
 #define DEVICE (0)
 static const int INPUT_H = 224;
 static const int INPUT_W = 224;
-const int BATCH_SIZE = 1;
-const int POSE_SIZE = 144;
-const int SHAPE_SIZE = 10;
-const int CAM_SIZE = 3;
+static const int BATCH_SIZE = 1;
+static const int POSE_SIZE = 144;
+static const int SHAPE_SIZE = 10;
+static const int CAM_SIZE = 3;
 static const int OUTPUT_SIZE = POSE_SIZE + SHAPE_SIZE;
-const char* INPUT_BLOB_NAME = "input";
-const char* OUTPUT_BLOB_NAME = "output";
+static const char* INPUT_BLOB_NAME = "input";
+static const char* OUTPUT_BLOB_NAME = "output";
 
-static void rot6d_to_mat(const cv::Mat &rot6d_, cv::Mat &rotmat_)
+void _HMR::rot6d_to_mat(const cv::Mat &rot6d_, cv::Mat &rotmat_)
 {
     // TEST
     // cv::Mat rot6d = (cv::Mat_<float>(1,6) << 0.4250,  0.0280, 0.0810, -1.0976, -0.7952, -0.0642);
@@ -67,7 +67,7 @@ static void rot6d_to_mat(const cv::Mat &rot6d_, cv::Mat &rotmat_)
 
 }
 
-static std::map<std::string, Weights> loadWeights(const std::string file)
+std::map<std::string, Weights> _HMR::loadWeights(const std::string file)
 {
     std::cout << "Loading weights: " << file << std::endl;
     std::map<std::string, Weights> weightMap;
@@ -106,7 +106,8 @@ static std::map<std::string, Weights> loadWeights(const std::string file)
     return weightMap;
 }
 
-static IScaleLayer* addBatchNorm2d(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, std::string lname, float eps) {
+IScaleLayer* _HMR::addBatchNorm2d(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, std::string lname, float eps) 
+{
     float *gamma = (float*)weightMap[lname + ".weight"].values;
     float *beta = (float*)weightMap[lname + ".bias"].values;
     float *mean = (float*)weightMap[lname + ".running_mean"].values;
@@ -140,7 +141,8 @@ static IScaleLayer* addBatchNorm2d(INetworkDefinition *network, std::map<std::st
     return scale_1;
 }
 
-static IActivationLayer* bottleneck(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int inch, int outch, int stride, std::string lname) {
+IActivationLayer* _HMR::bottleneck(INetworkDefinition *network, std::map<std::string, Weights>& weightMap, ITensor& input, int inch, int outch, int stride, std::string lname) 
+{
     Weights emptywts{DataType::kFLOAT, nullptr, 0};
 
     IConvolutionLayer* conv1 = network->addConvolutionNd(input, outch, DimsHW{1, 1}, weightMap[lname + "conv1.weight"], emptywts);
@@ -182,7 +184,7 @@ static IActivationLayer* bottleneck(INetworkDefinition *network, std::map<std::s
     return relu3;
 }
 
-static ICudaEngine* createEngine(unsigned int maxBatchSize, 
+ICudaEngine* _HMR::createEngine(unsigned int maxBatchSize, 
                           IBuilder* builder, 
                           IBuilderConfig* config, 
                           DataType dt, 
@@ -358,7 +360,7 @@ static ICudaEngine* createEngine(unsigned int maxBatchSize,
     return engine;
 }
 
-static void APIToModel(unsigned int maxBatchSize, IHostMemory** modelStream, const std::string &wts_path_)
+void _HMR::APIToModel(unsigned int maxBatchSize, IHostMemory** modelStream, const std::string &wts_path_)
 {
     // Create builder
     IBuilder* builder = createInferBuilder(gLogger);
@@ -377,7 +379,7 @@ static void APIToModel(unsigned int maxBatchSize, IHostMemory** modelStream, con
     config->destroy();
 }
 
-static void doInference(IExecutionContext& context, cudaStream_t& stream, void **buffers, float* input, float* output, int batchSize) {
+void _HMR::doInference(IExecutionContext& context, cudaStream_t& stream, void **buffers, float* input, float* output, int batchSize) {
     // DMA input batch data to device, infer on the batch asynchronously, and DMA output back to host
     CUDA_CHECK(cudaMemcpyAsync(buffers[0], input, batchSize * 3 * INPUT_H * INPUT_W * sizeof(float), cudaMemcpyHostToDevice, stream));
     context.enqueue(batchSize, buffers, stream, nullptr);
@@ -385,7 +387,7 @@ static void doInference(IExecutionContext& context, cudaStream_t& stream, void *
     cudaStreamSynchronize(stream);
 }
 
-static cv::Mat get_transform(const cv::Point2i &center_, float scale_, int res_)
+cv::Mat _HMR::get_transform(const cv::Point2i &center_, float scale_, int res_)
 {
     float h = 200 * scale_;
     cv::Mat t = cv::Mat::eye(3,3,CV_32F);
@@ -396,7 +398,7 @@ static cv::Mat get_transform(const cv::Point2i &center_, float scale_, int res_)
     return t;
 }
 
-static cv::Point2i transform(const cv::Point2i &pt_, const cv::Point2i &center_, float scale_, int res_)
+cv::Point2i _HMR::transform(const cv::Point2i &pt_, const cv::Point2i &center_, float scale_, int res_)
 {
     cv::Mat t  = get_transform(center_, scale_, res_);
     cv::Mat t_i = t.inv();
@@ -406,7 +408,7 @@ static cv::Point2i transform(const cv::Point2i &pt_, const cv::Point2i &center_,
     return cv::Point2i(new_pt.at<float>(0,0) + 1, new_pt.at<float>(1,0) + 1);
 }
 
-static void preprocess_img(const cv::Mat &img_, cv::Mat &img_preprocess_)
+void _HMR::preprocess_img(const cv::Mat &img_, cv::Mat &img_preprocess_)
 {
     int height = img_.rows;
     int width = img_.cols;
