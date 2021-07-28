@@ -9,14 +9,15 @@ link_directories(/usr/local/cuda/lib64)
 
 
 # OpenCV
-find_package(OpenCV 3.4.8 REQUIRED PATHS ~/PLATFORM/3rdparty/opencv348)
+find_package(OpenCV 3.4.8 REQUIRED PATHS /root/PLATFORM/3rdparty/opencv348)
 # find_package(OpenCV REQUIRED)
 
 # xtensor
-find_package(xtensor REQUIRED)
+find_package(xtl 0.7.2 REQUIRED PATHS /root/PLATFORM/packages/xtl/build/install)
+find_package(xtensor REQUIRED PATHS /root/PLATFORM/3rdparty/xtensor)
 message(${xtensor_INCLUDE_DIRS})
 # json
-find_package(nlohmann_json REQUIRED)
+find_package(nlohmann_json REQUIRED PATHS /root/PLATFORM/3rdparty/nlohmann_json)
 
 # #libtorch
 # find_package(Torch REQUIRED PATHS /home/ubuntu/PLATFORM/3rdparty/libtorch130)
@@ -30,12 +31,12 @@ find_package(nlohmann_json REQUIRED)
 # endif(NOT TORCH_FOUND)
 
 #libtorch
-set(LIBTORCH_ROOT ~/PLATFORM/3rdparty/libtorch131)
+set(LIBTORCH_ROOT /root/PLATFORM/3rdparty/libtorch131)
 set(LIBTORCH_INCLUDE_DIRS ${LIBTORCH_ROOT}/include ${LIBTORCH_ROOT}/include/torch/csrc/api/include)
 set(LIBTORCH_LIB_DIR ${LIBTORCH_ROOT}/lib)
 
 # TensorRT
-set(TENSORRT_ROOT ~/PLATFORM/3rdparty/TensorRT-7.0.0.11)
+set(TENSORRT_ROOT /root/PLATFORM/3rdparty/TensorRT-7.0.0.11)
 set(TENSORRT_INCLUDE_DIR ${TENSORRT_ROOT}/include)
 set(TENSORRT_LIB_DIR ${TENSORRT_ROOT}/lib)
 
@@ -68,5 +69,5 @@ target_link_libraries(hmr ${OpenCV_LIBS}
 # make install
 install(FILES class_hmr.h DESTINATION include)
 install(TARGETS hmr LIBRARY DESTINATION lib)
-install(FILES ../hmr_fp16_b1.engine DESTINATION lib)
 install(FILES extra/SMPLpp/smpl_male.json DESTINATION lib)
+install(FILES extra/SMPLpp/hmr.wts DESTINATION lib)

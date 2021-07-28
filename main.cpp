@@ -11,8 +11,8 @@ int main()
     HMR hmr;
 
     //
-    std::string wts_path = "../hmr.wts";
-    std::string engine_path = "../hmr_fp16_b1.engine";
+    std::string wts_path = "../lib/extra/SMPLpp/hmr.wts";
+    std::string engine_path = "../lib/extra/SMPLpp/hmr_fp16_b1.engine";
 #if 0
     bool is_serialized = hmr.serialize(wts_path, engine_path);
     if(!is_serialized)
@@ -71,7 +71,7 @@ int main()
 
     std::vector<cv::Mat> imgs;
     {
-        cv::Mat img = cv::imread("../data/im1010.jpg");
+        cv::Mat img = cv::imread("../data/test4.jpg");
         imgs.push_back(img);
     }
     
@@ -84,12 +84,11 @@ int main()
     std::vector<std::vector<cv::Vec3f> > vec_vertices;
     bool is_run = hmr.run_joints(imgs, poses, shapes, vec_3djoints, vec_vertices);
 
-
     auto end = std::chrono::system_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " total ms" << std::endl;
 
     {
-        std::ofstream outFile("joint.obj");
+        std::ofstream outFile("../data/joint.obj");
         for (int i = 0; i < vec_3djoints.size() ; i++)
         {
             for (int j = 0; j < vec_3djoints[i].size(); j++)
@@ -110,7 +109,7 @@ int main()
     }
 
     {
-        std::ofstream outFile("verts.obj");
+        std::ofstream outFile("../data/verts.obj");
         for (int i = 0; i < vec_vertices.size() ; i++)
         {
             for (int j = 0; j < vec_vertices[i].size(); j++)

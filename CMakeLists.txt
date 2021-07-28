@@ -23,9 +23,8 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_INSTALL_PREFIX install)
 
 # OpenCV
-find_package(OpenCV 3.4.8 REQUIRED PATHS ~/PLATFORM/3rdparty/opencv348)
+find_package(OpenCV 3.4.15 REQUIRED PATHS /root/PLATFORM/3rdparty/opencv3415)
 # find_package(OpenCV REQUIRED)
-
 
 
 #
