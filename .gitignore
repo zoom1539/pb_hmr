@@ -2,5 +2,6 @@ build
 lib/extra/SMPLpp/smpl_male.json
 *.wts
 *.engine
-data/test*.jpg
-data/*obj
+data/*.jpg
+data/*.obj
+!data/im1010.jpg
