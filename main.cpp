@@ -71,7 +71,7 @@ int main()
 
     std::vector<cv::Mat> imgs;
     {
-        cv::Mat img = cv::imread("../data/test10.jpg");
+        cv::Mat img = cv::imread("../data/im1010.jpg");
         imgs.push_back(img);
     }
     
