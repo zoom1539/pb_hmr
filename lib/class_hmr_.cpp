@@ -3,7 +3,6 @@
 #include "cuda_runtime_api.h"
 #include "cuda_utils.h"
 #include "logging.h"
-#include "class_smpl_.h"
 
 using namespace nvinfer1;
 
@@ -617,66 +616,6 @@ bool _HMR::run(const std::vector<cv::Mat> &imgs_,
 
         //
         fcount = 0;
-    }
-
-    return true;
-}
-
-bool _HMR::init_joints(const std::string &engine_path_, std::string &smpl_male_json_path_)
-{
-    bool is_init = init(engine_path_);
-    if (!is_init)
-    {
-        return false;
-    }
-
-
-    is_init = _smpl.init(smpl_male_json_path_);
-    if (!is_init)
-    {
-        return false;
-    }
-
-    return true;
-}
-
-bool _HMR::run_joints(const std::vector<cv::Mat> &imgs_, 
-             std::vector<std::vector<cv::Vec3f> > &poses_,
-             std::vector<std::vector<float> > &shapes_,
-             std::vector<std::vector<cv::Vec3f> > &vec_3djoints_,
-             std::vector<std::vector<cv::Vec3f> > &vec_vertices_)
-{
-    bool is_run = run(imgs_, poses_, shapes_);
-    if (!is_run)
-    {
-        return false;
-    }
-
-    for (int i = 0; i < imgs_.size(); i++)
-    {
-        float theta[72];
-        for (int j = 0; j < poses_[i].size(); j++)
-        {
-            theta[j * 3] = poses_[i][j][0];
-            theta[j * 3 + 1] = poses_[i][j][1];
-            theta[j * 3 + 2] = poses_[i][j][2];
-        }
-
-        float beta[10];
-        for (int j = 0; j < shapes_[i].size(); j++)
-        {
-            beta[j] = shapes_[i][j];
-        }
-
-        // 
-        std::vector<cv::Vec3f> joints;
-        std::vector<cv::Vec3f> vertices;
-        _smpl.run(theta, beta, joints, vertices);
-        
-        //
-        vec_3djoints_.push_back(joints);
-        vec_vertices_.push_back(vertices);
-
     }
 
     return true;
