@@ -86,7 +86,14 @@ int main()
 
     auto end = std::chrono::system_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " total ms" << std::endl;
-
+	{
+		for (int i = 0; i < 24; i++)
+		{
+			std::cout << poses[0][i][0] << std::endl;
+			std::cout << poses[0][i][1] << std::endl;
+			std::cout << poses[0][i][2] << std::endl;
+		}
+	}
     {
         std::ofstream outFile("../data/joint.obj");
         for (int i = 0; i < vec_3djoints.size() ; i++)
