@@ -240,7 +240,7 @@ static ICudaEngine* createEngine(unsigned int maxBatchSize,
     assert(pool2);
     pool2->setStrideNd(DimsHW{1, 1});
 
-    std::cout << "resnet50 create" << std::endl;
+    //std::cout << "resnet50 create" << std::endl;
 
     //
     IConstantLayer *init_pose = network->addConstant(Dims3{144, 1, 1}, weightMap["init_pose"]);
@@ -275,7 +275,7 @@ static ICudaEngine* createEngine(unsigned int maxBatchSize,
     IElementWiseLayer* pred_cam1 = network->addElementWise(*deccam1->getOutput(0), *init_cam->getOutput(0), ElementWiseOperation::kSUM);
     assert(pred_cam1);
 
-    std::cout << "IEF1 create" << std::endl;
+    //std::cout << "IEF1 create" << std::endl;
 
     // 2
     ITensor* IEFinputTensors2[] = {pool2->getOutput(0), pred_pose1->getOutput(0), pred_shape1->getOutput(0), pred_cam1->getOutput(0)};
@@ -302,7 +302,7 @@ static ICudaEngine* createEngine(unsigned int maxBatchSize,
     IElementWiseLayer* pred_cam2 = network->addElementWise(*deccam2->getOutput(0), *pred_cam1->getOutput(0), ElementWiseOperation::kSUM);
     assert(pred_cam2);
 
-    std::cout << "IEF2 create" << std::endl;
+    //std::cout << "IEF2 create" << std::endl;
 
 
     // 3
@@ -330,7 +330,7 @@ static ICudaEngine* createEngine(unsigned int maxBatchSize,
     IElementWiseLayer* pred_cam3 = network->addElementWise(*deccam3->getOutput(0), *pred_cam2->getOutput(0), ElementWiseOperation::kSUM);
     assert(pred_cam3);
 
-    std::cout << "IEF3 create" << std::endl;
+    //std::cout << "IEF3 create" << std::endl;
 
     ITensor* output_tensors[] = {pred_pose3->getOutput(0), pred_shape3->getOutput(0)};
     IConcatenationLayer* output_cat = network->addConcatenation(output_tensors, 2);

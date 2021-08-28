@@ -42,12 +42,23 @@ namespace smpl {
 
 //===== INTERNAL DEFINITIONS ==================================================
 
+
+
+#ifdef WIN32
+long long batch_size = 1;// 1
+long long vertex_num = 6890;// 6890
+const long long joint_num = 24;// 24
+const long long shape_basis_dim = 10;// 10
+const long long pose_basis_dim = 207;// 207
+const long long face_index_num = 13776;// 13776
+#else
 int64_t batch_size = 1;// 1
 int64_t vertex_num = 6890;// 6890
 const int64_t joint_num = 24;// 24
 const int64_t shape_basis_dim = 10;// 10
 const int64_t pose_basis_dim = 207;// 207
 const int64_t face_index_num = 13776;// 13776
+#endif
 
 //=============================================================================
 } // namespace smpl

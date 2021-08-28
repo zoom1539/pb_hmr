@@ -92,12 +92,22 @@ namespace smpl {
 
 //===== INTERNAL DECLARATIONS =================================================
 
+
+#ifdef WIN32
+extern long long batch_size;// 256
+extern long long vertex_num;// 6890
+extern const long long joint_num;// 24
+extern const long long shape_basis_dim;// 10
+extern const long long pose_basis_dim;// 207
+extern const long long face_index_num;// 13776
+#else
 extern int64_t batch_size;// 256
 extern int64_t vertex_num;// 6890
 extern const int64_t joint_num;// 24
 extern const int64_t shape_basis_dim;// 10
 extern const int64_t pose_basis_dim;// 207
 extern const int64_t face_index_num;// 13776
+#endif
 
 //=============================================================================
 } // namespace smpl
